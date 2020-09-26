@@ -4,11 +4,30 @@ require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
 
-function doLogin($username,$password)
+function doLogin($email,$password)
 {
     // lookup username in databas
     // check password
-    return true;
+	$mydb = new mysqli('127.0.0.1','testuser','12345','testdb');
+	if ($mydb->errno != 0)
+	{
+		echo "Failed to connect to database: ". $mydb->error . PHP_EOL;
+		exit(0);
+	}
+	echo "Connected to Database".PHP_EOL;
+	echo "Checking database for user";
+	$query = "SELECT * FROM `tablename` WHERE `EMAIL` = '$email' AND `Password` = '$password'";
+	$result = $mydb->query($query);
+	if ($mydb->errno != 0)
+	{
+		echo "Failed to execute query: ".PHP_EOL;
+		echo __FILE__.':'.__LINE__.":error: ".$mydb->error.PHP_EOL;
+		exit(0);
+	}
+	if ($result) {
+		return true;
+	}
+	return false;
     //return false if not valid
 }
 
