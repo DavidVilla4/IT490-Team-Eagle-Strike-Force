@@ -68,9 +68,9 @@ function requestProcessor($request)
   switch ($request['type'])
   {
     case "Login":
-      return doLogin($request['username'],$request['password']);
+      return doLogin($request['email'],$request['password']);
     case "Create":
-      return doCreate($request['username'],$request['password']);
+      return doCreate($request['email'],$request['password']);
     case "validate_session":
       return doValidate($request['sessionId']);
   }
