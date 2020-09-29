@@ -8,7 +8,7 @@ function doLogin($email,$password)
 {
     // lookup username in databas
     // check password
-	$mydb = new mysqli('10.192.234.212','admin','admin','newDB');
+	$mydb = new mysqli('10.192.235.9','admin','admin','newDB');
 	if ($mydb->errno != 0)
 	{
 		echo "Failed to connect to database: ". $mydb->error . PHP_EOL;
@@ -68,8 +68,10 @@ function requestProcessor($request)
   switch ($request['type'])
   {
     case "Login":
+      echo "Attempting Login".PHP_EOL;
       return doLogin($request['email'],$request['password']);
     case "Create":
+      echo "Attempting Account Creation".PHP_EOL;
       return doCreate($request['email'],$request['password']);
     case "validate_session":
       return doValidate($request['sessionId']);
