@@ -8,7 +8,7 @@ function doLogin($email,$password)
 {
     // lookup username in databas
     // check password
-	$mydb = new mysqli('10.192.235.9','admin','admin','newDB');
+	$mydb = new mysqli('10.192.235.9:3306','tesk','tesk2020','newDB');
 	if ($mydb->errno != 0)
 	{
 		echo "Failed to connect to database: ". $mydb->error . PHP_EOL;
