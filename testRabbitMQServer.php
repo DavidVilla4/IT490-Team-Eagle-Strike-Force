@@ -25,6 +25,7 @@ function doLogin($email,$password)
 		exit(0);
 	}
 	if ($result) {
+		echo "Logging In User".PHP_EOL;
 		return true;
 	}
 	return false;
@@ -66,9 +67,9 @@ function requestProcessor($request)
   }
   switch ($request['type'])
   {
-    case "login":
+    case "Login":
       return doLogin($request['username'],$request['password']);
-    case "create":
+    case "Create":
       return doCreate($request['username'],$request['password']);
     case "validate_session":
       return doValidate($request['sessionId']);
