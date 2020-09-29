@@ -8,15 +8,15 @@ function doLogin($email,$password)
 {
     // lookup username in databas
     // check password
-	$mydb = new mysqli('127.0.0.1','testuser','12345','testdb');
+	$mydb = new mysqli('10.192.234.212','admin','admin','newDB');
 	if ($mydb->errno != 0)
 	{
 		echo "Failed to connect to database: ". $mydb->error . PHP_EOL;
 		exit(0);
 	}
 	echo "Connected to Database".PHP_EOL;
-	echo "Checking database for user";
-	$query = "SELECT * FROM `tablename` WHERE `EMAIL` = '$email' AND `Password` = '$password'";
+	echo "Checking database for user".PHP_EOL;
+	$query = "SELECT * FROM `USERS` WHERE `email` = '$email' AND `password` = '$password'";
 	$result = $mydb->query($query);
 	if ($mydb->errno != 0)
 	{
@@ -31,6 +31,31 @@ function doLogin($email,$password)
     //return false if not valid
 }
 
+function doCreate($email,$password)
+{
+	$mydb = new mysqli('10.192.234.212','admin','admin','newDB');
+	if ($mydb->errno != 0)
+	{
+		echo "Failed to connect to database: ". $mydb->error . PHP_EOL;
+		exit(0);
+	}
+	echo "Connected to Database".PHP_EOL;
+	echo "Creating User Account".PHP_EOL;
+	$query = "INSERT INTO `USERS` (`email`, `password`) VALUES ('$email','$password')";
+	$result = $mydb->query($query);
+	if ($mydb->errno != 0)
+	{
+		echo "Failed to execute query: ".PHP_EOL;
+		echo __FILE__.':'.__LINE__.":error: ".$mydb->error.PHP_EOL;
+		exit(0);
+	}
+	if ($result) {
+		echo "Account Created";
+		return true;
+	}
+	return false;
+}
+
 function requestProcessor($request)
 {
   echo "received request".PHP_EOL;
@@ -43,6 +68,8 @@ function requestProcessor($request)
   {
     case "login":
       return doLogin($request['username'],$request['password']);
+    case "create":
+      return doCreate($request['username'],$request['password']);
     case "validate_session":
       return doValidate($request['sessionId']);
   }
