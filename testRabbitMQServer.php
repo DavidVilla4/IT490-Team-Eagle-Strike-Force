@@ -8,7 +8,7 @@ function doLogin($email,$password)
 {
     // lookup username in databas
     // check password
-	$mydb = new mysqli('10.192.235.9:3306','tesk','tesk2020','newDB');
+	$mydb = new mysqli('10.192.234.91:3306','tesk','tesk2020','newDb');
 	if ($mydb->errno != 0)
 	{
 		echo "Failed to connect to database: ". $mydb->error . PHP_EOL;
@@ -24,9 +24,15 @@ function doLogin($email,$password)
 		echo __FILE__.':'.__LINE__.":error: ".$mydb->error.PHP_EOL;
 		exit(0);
 	}
-	if ($result) {
-		echo "Logging In User".PHP_EOL;
-		return true;
+	if ($result)
+	{
+		$row = $result->fetch_assoc();
+		if ($row["password"] == $password)
+		{
+			echo "Logging In User".PHP_EOL;
+			return true;
+		}
+		echo "Password does not match".PHP_EOL;	
 	}
 	return false;
     //return false if not valid
@@ -34,7 +40,7 @@ function doLogin($email,$password)
 
 function doCreate($email,$password)
 {
-	$mydb = new mysqli('10.192.234.212','admin','admin','newDB');
+	$mydb = new mysqli("10.192.234.91:3306","tesk","tesk2020","newDb");
 	if ($mydb->errno != 0)
 	{
 		echo "Failed to connect to database: ". $mydb->error . PHP_EOL;
@@ -51,7 +57,7 @@ function doCreate($email,$password)
 		exit(0);
 	}
 	if ($result) {
-		echo "Account Created";
+		echo "Account Created".PHP_EOL;
 		return true;
 	}
 	return false;
@@ -69,7 +75,11 @@ function requestProcessor($request)
   {
     case "Login":
       echo "Attempting Login".PHP_EOL;
-      return doLogin($request['email'],$request['password']);
+      $var = doLogin($request['email'],$request['password']);
+      if ($var) {
+	      return 1;
+      }
+      return 0;
     case "Create":
       echo "Attempting Account Creation".PHP_EOL;
       return doCreate($request['email'],$request['password']);
