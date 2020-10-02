@@ -17,7 +17,7 @@ if(isset($_POST))
 {
     $type = "Create";
     $email = $_POST["email"];
-    $password = $_POST["password";
+    $password = $_POST["password"];
 }
 $request = array();
 $request['type'] = "Create";
