@@ -7,16 +7,49 @@ require_once('rabbitMQLib.inc');
 function doLogin($email,$password)
 {
     // lookup username in databas
-    // check password
-	$mydb = new mysqli('127.0.0.1','testuser','12345','testdb');
+	// check password
+	$mydb = new mysqli('127.0.0.1','admin','admin','newDb');
 	if ($mydb->errno != 0)
 	{
 		echo "Failed to connect to database: ". $mydb->error . PHP_EOL;
 		exit(0);
 	}
 	echo "Connected to Database".PHP_EOL;
-	echo "Checking database for user";
-	$query = "SELECT * FROM `tablename` WHERE `EMAIL` = '$email' AND `Password` = '$password'";
+	echo "Checking database for user".PHP_EOL;
+	$query = "SELECT * FROM `USERS` WHERE `email` = '$email' AND `password` = '$password'";
+	$result = $mydb->query($query);
+	if ($mydb->errno != 0)
+	{
+		echo "Failed to execute query: ".PHP_EOL;
+		echo __FILE__.':'.__LINE__.":error: ".$mydb->error.PHP_EOL;
+		exit(0);
+	}
+	if ($result)
+	{
+		$row = $result->fetch_assoc();
+		if ($row["password"] == $password)
+		{
+			echo "Logging In User".PHP_EOL;
+			return true;
+		}
+		echo "Password does not match".PHP_EOL;	
+	}
+	return false;
+	return true;
+    //return false if not valid
+}
+
+function doCreate($email,$password)
+{
+	$mydb = new mysqli('127.0.0.1','admin','admin','newDb');
+	if ($mydb->errno != 0)
+	{
+		echo "Failed to connect to database: ". $mydb->error . PHP_EOL;
+		exit(0);
+	}
+	echo "Connected to Database".PHP_EOL;
+	echo "Creating User Account".PHP_EOL;
+	$query = "INSERT INTO `USERS` (`email`, `password`) VALUES ('$email','$password')";
 	$result = $mydb->query($query);
 	if ($mydb->errno != 0)
 	{
@@ -25,10 +58,10 @@ function doLogin($email,$password)
 		exit(0);
 	}
 	if ($result) {
+		echo "Account Created".PHP_EOL;
 		return true;
 	}
 	return false;
-    //return false if not valid
 }
 
 function requestProcessor($request)
@@ -41,8 +74,16 @@ function requestProcessor($request)
   }
   switch ($request['type'])
   {
-    case "login":
-      return doLogin($request['username'],$request['password']);
+    case "Login":
+      echo "Attempting Login".PHP_EOL;
+      $var = doLogin($request['email'],$request['password']);
+      if ($var) {
+	      return 1;
+      }
+      return 0;
+    case "Create":
+      echo "Attempting Account Creation".PHP_EOL;
+      return doCreate($request['email'],$request['password']);
     case "validate_session":
       return doValidate($request['sessionId']);
   }
