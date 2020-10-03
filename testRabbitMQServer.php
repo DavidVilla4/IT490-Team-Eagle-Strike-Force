@@ -7,8 +7,8 @@ require_once('rabbitMQLib.inc');
 function doLogin($email,$password)
 {
     // lookup username in databas
-    // check password
-	$mydb = new mysqli('10.192.234.91:3306','tesk','tesk2020','newDb');
+	// check password
+	$mydb = new mysqli('127.0.0.1','tesk','tesk2020','newDb');
 	if ($mydb->errno != 0)
 	{
 		echo "Failed to connect to database: ". $mydb->error . PHP_EOL;
@@ -35,12 +35,13 @@ function doLogin($email,$password)
 		echo "Password does not match".PHP_EOL;	
 	}
 	return false;
+	return true;
     //return false if not valid
 }
 
 function doCreate($email,$password)
 {
-	$mydb = new mysqli("10.192.234.91:3306","tesk","tesk2020","newDb");
+	$mydb = new mysqli('127.0.0.1','tesk','tesk2020','newDb');
 	if ($mydb->errno != 0)
 	{
 		echo "Failed to connect to database: ". $mydb->error . PHP_EOL;
