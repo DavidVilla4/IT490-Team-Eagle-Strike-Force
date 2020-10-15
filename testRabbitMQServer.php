@@ -35,6 +35,7 @@ function doLogin($email,$password,$logs)
 		{
 			$msg = "Logging In User".PHP_EOL;
 			array_push($logs,$msg);
+			$logs['returnCode'] = '1';
 			return $logs;
 		}
 		$msg = "Password does not match".PHP_EOL;
@@ -86,7 +87,7 @@ function doCreate($email,$password,$logs)
 
 function requestProcessor($request)
 {
-  $logArray = array();
+  $logArray = array("returnCode" => '0');
   echo "Received request".PHP_EOL;
   var_dump($request);
   if(!isset($request['type']))
