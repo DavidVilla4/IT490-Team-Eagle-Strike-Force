@@ -15,7 +15,7 @@ function doLogin($email,$password,$logs)
 	{
 		$msg = "Failed to connect to database: ". $mydb->error . PHP_EOL;
 		array_push($logs,$msg);
-		exit(0);
+		exit($logs);
 	}
 	$msg = "Connected to Database, Checking database for user".PHP_EOL;
 	array_push($logs,$msg);
@@ -26,7 +26,7 @@ function doLogin($email,$password,$logs)
 		$msg = "Failed to execute query: ".PHP_EOL;
 		$msg1 = __FILE__.':'.__LINE__.":error: ".$mydb->error.PHP_EOL;
 		array_push($logs,$msg,$msg1);
-		exit(0);
+		exit($logs);
 	}
 	if ($result)
 	{
@@ -58,7 +58,7 @@ function doCreate($email,$password,$logs)
 	{
 		$msg = "Failed to connect to database: ". $mydb->error . PHP_EOL;
 		array_push($logs,$msg);
-		exit(0);
+		exit($logs);
 	}
 	$msg = "Connected to Database\nCreating User Account".PHP_EOL;
 	array_push($logs,$msg);
@@ -69,7 +69,7 @@ function doCreate($email,$password,$logs)
 		$msg = "Failed to execute query: ".PHP_EOL;
 		$msg1 = __FILE__.':'.__LINE__.":error: ".$mydb->error.PHP_EOL;
 		array_push($logs,$msg,$msg1);
-		exit(0);
+		exit($logs);
 	}
 	if ($result) {
 		$msg = "Account Created".PHP_EOL;
