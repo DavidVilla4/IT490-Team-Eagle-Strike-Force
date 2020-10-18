@@ -6,8 +6,8 @@ require_once('rabbitMQLib.inc');
 
 function requestProcessor($request)
 {
-	var_dump($request);
-	return $request['logs'];
+	echo date("l F jS Y h:i:s A").PHP_EOL;
+	return var_dump($request);
 }
 
 $server = new rabbitMQServer("logging.ini","testServer");
