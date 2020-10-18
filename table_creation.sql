@@ -40,13 +40,14 @@ CREATE TABLE ingredients(
 	PRIMARY KEY (ingredient_id),
 	FOREIGN KEY (ingredient_id) REFERENCES recipe_ingredients(ingredient_id)
 );
+/*
 
 SELECT 
-	r.recipe_title AS 'Recipe Name',
-	r.recipe_description AS 'Recipe Description',
-	z.measurement_qty_id AS 'Amount',
-	u.measurement_desc AS 'Unit',
-	i.ingredient_name AS 'Ingredient'
+	r.recipe_title AS Recipe Name,
+	r.recipe_description AS Recipe Description,
+	z.measurement_qty_id AS Amount,
+	u.measurement_desc AS Unit,
+	i.ingredient_name AS Ingredient
 FROM 
 	recipes r
 LEFT JOIN
@@ -58,5 +59,5 @@ LEFT JOIN
 ;
 	
 	
-	
+/*	
 	

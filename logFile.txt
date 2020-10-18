@@ -1,0 +1,98 @@
+
+
+array(3) {
+  ["returnCode"]=>
+  string(1) "0"
+  [0]=>
+  string(17) "Attempting Login
+"
+  [1]=>
+  string(64) "Access denied for user 'admin'@'localhost' (using password: YES)"
+}
+processed one-way message
+
+
+
+
+
+
+
+
+
+
+
+
+array(4) {
+  ["returnCode"]=>
+  string(1) "1"
+  [0]=>
+  string(17) "Attempting Login
+"
+  [1]=>
+  string(50) "Connected to Database, Checking database for user
+"
+  [2]=>
+  string(16) "Logging In User
+"
+}
+processed one-way message
+
+
+array(4) {
+  ["returnCode"]=>
+  string(1) "1"
+  [0]=>
+  string(17) "Attempting Login
+"
+  [1]=>
+  string(50) "Connected to Database, Checking database for user
+"
+  [2]=>
+  string(16) "Logging In User
+"
+}
+processed one-way message
+
+
+array(4) {
+  ["returnCode"]=>
+  string(1) "1"
+  [0]=>
+  string(17) "Attempting Login
+"
+  [1]=>
+  string(50) "Connected to Database, Checking database for user
+"
+  [2]=>
+  string(16) "Logging In User
+"
+}
+processed one-way message
+array(4) {
+  ["returnCode"]=>
+  string(1) "1"
+  [0]=>
+  string(17) "Attempting Login
+"
+  [1]=>
+  string(50) "Connected to Database, Checking database for user
+"
+  [2]=>
+  string(16) "Logging In User
+"
+}
+processed one-way message
+array(4) {
+  ["returnCode"]=>
+  string(1) "1"
+  [0]=>
+  string(17) "Attempting Login
+"
+  [1]=>
+  string(50) "Connected to Database, Checking database for user
+"
+  [2]=>
+  string(16) "Logging In User
+"
+}
+processed one-way message
