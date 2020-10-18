@@ -29,16 +29,23 @@ $response = $client->send_request($request);
 //$response = $client->publish($request);
 
 echo "client received response: ".PHP_EOL;
+echo "hello world 2".PHP_EOL;
 print_r($response);
 
-if ($response == "1")
+if ($response['returnCode']=="1")
 {
-	// $logging  = new rabbitMQClient("logging.ini","testServer");
-   	// $logging ->publish($response);
-	include 'cookbook.hmtl';
-	header('Location: cookbook.html');
+	$logging  = new rabbitMQClient("logging.ini","testServer");
+   	$logging ->publish($response);
+	include 'recipe.hmtl';
+	header('Location: recipe.html');
 	echo "going to new website".PHP_EOL;
 }
+else
+{
+	echo "failed to log in".PHP_EOL;
+}
+
+
 $log_rep= "going to new website";
 $response = $client->publish($request);
 

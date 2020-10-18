@@ -1,3 +1,6 @@
+<?php
+include 'recipeConnect.php';
+?>
 <!doctype html>
 <html lang="en">
   <head>
@@ -13,6 +16,26 @@
     <button onClick="myFunction()">New Recipe</button>
         <a href ="ingredient.html"> <p id="demo"></p></a>
         </form>
+    <p id="recipes">
+	<?php
+	$sql = "SELECT * FROM database";
+	$result = mysqli_query($conn, $sql);
+	if (mysqli_num_rows($result)>0)
+	{
+		while($row=mysqli_fetch_assoc($result))
+		{
+			echo "<p>";
+			echo $row['recipe'];
+            echo "<br>";
+            echo "<br>";
+		}
+	}
+    else
+    {
+        echo "you do not have any recipes yet";
+    }
+	?>
+    </p>
     <script>
     function myFunction()
         {
