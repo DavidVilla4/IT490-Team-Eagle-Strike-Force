@@ -19,7 +19,7 @@ function doVoting($recipeName,$review,$logs)
 	array_push($logs,$msg);
 	if ($review == "up")
        	{
-		$query = "UPDATE field_name SET vote = vote + 1 WHERE recipeName = $recipeName";
+		$query = "UPDATE recipes SET score = score + 1 WHERE recipe_title = '$recipeName'";
 		$result = $mydb->query($query);
 		if ($mydb->errno != 0)
 		{
@@ -31,12 +31,13 @@ function doVoting($recipeName,$review,$logs)
 		if ($result)
 		{
 			$msg = "Recipe ". $recipeName . "was upvoted".PHP_EOL;
+			$logs['returnCode'] = '1';
 			array_push($logs,$msg);
 		}
 	}
-	else if ($review == "no")
+	else if ($review == "down")
        	{
-		$query = "UPDATE field_name SET vote = vote - 1 WHERE recipeName = $recipeName";
+		$query = "UPDATE recipes SET score = score - 1 WHERE recipe_title = '$recipeName'";
 		$result = $mydb->query($query);
 		if ($mydb->errno != 0)
 		{
@@ -48,6 +49,7 @@ function doVoting($recipeName,$review,$logs)
 		if ($result)
 		{
 			$msg = "Recipe ". $recipeName . "was downvoted".PHP_EOL;
+			$logs['returnCode'] = '1';
 			array_push($logs,$msg);
 		}
 	}
@@ -57,7 +59,7 @@ function doVoting($recipeName,$review,$logs)
 		array_push($logs,$msg);
 		exit($logs);
 	}
-	$query = "SELECT field_name FROM Recipes WHERE recipeName = '$recipeName'";
+	$query = "SELECT score FROM recipes WHERE recipe_title = '$recipeName'";
 	$result = $mydb->query($query);
 	if ($mydb->errno != 0)
 	{
@@ -69,7 +71,7 @@ function doVoting($recipeName,$review,$logs)
 	if ($result)
 	{
 		$row = mysqli_fetch_array($result);
-		$logs['voteCount'] = $row['field_name'];
+		$logs['voteCount'] = $row['score'];
 	}
 	return $logs;
     }
@@ -79,7 +81,7 @@ function doVoting($recipeName,$review,$logs)
     }
 }
 
-function doAddRec($recName,$logs)
+function doAddRec($recipeName,$logs)
 {	
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);   
     try {    
@@ -92,7 +94,7 @@ function doAddRec($recName,$logs)
 	}
 	$msg = "Connected to Database, Checking database for user".PHP_EOL;
 	array_push($logs,$msg);
-	$query = "INSERT INTO Recipes (name) VALUES ('$recipeName')";
+	$query = "INSERT INTO recipes (recipe_title) VALUES ('$recipeName')";
 	$result = $mydb->query($query);
 	if ($mydb->errno != 0)
 	{
@@ -104,10 +106,84 @@ function doAddRec($recName,$logs)
 	if ($result)
 	{
 		$msg = "Recipe Added".PHP_EOL;
+		$logs['returnCode'] = '1';
 		array_push($logs,$msg);
 		exit($logs);
 	}
+	return $logs;
     }
+    catch(mysqli_sql_exception $e) {
+	    array_push($logs,$e->getMessage());
+	    return $logs;
+    }
+}
+
+function viewAllRec($logs)
+{
+    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);   
+    try {    
+	$mydb = new mysqli('127.0.0.1','admin','admin','newDb');
+	if ($mydb->errno != 0)
+	{
+		$msg = "Failed to connect to database: ". $mydb->error . PHP_EOL;
+		array_push($logs,$msg);
+		exit($logs);
+	}
+	$msg = "Connected to Database, Checking database for recipes".PHP_EOL;
+	array_push($logs,$msg);
+	$query = "SELECT * FROM recipes";
+	$result = $mydb->query($query);
+	if ($mydb->errno != 0)
+	{
+		$msg = "Failed to execute query: ".PHP_EOL;
+		$msg1 = __FILE__.':'.__LINE__.":error: ".$mydb->error.PHP_EOL;
+		array_push($logs,$msg,$msg1);
+	}
+	if ($result)
+	{
+		$msg = "Sending All Recipes".PHP_EOL;
+		$logs['returnCode'] = '1';
+		array_push($logs,$msg);
+	}
+	return $logs;
+    }
+    catch(mysqli_sql_exception $e) {
+	    array_push($logs,$e->getMessage());
+	    return $logs;
+    }
+}
+
+function viewUserRec($username, $logs)
+{
+    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);   
+    try {    
+	$mydb = new mysqli('127.0.0.1','admin','admin','newDb');
+	if ($mydb->errno != 0)
+	{
+		$msg = "Failed to connect to database: ". $mydb->error . PHP_EOL;
+		array_push($logs,$msg);
+		exit($logs);
+	}
+	$msg = "Connected to Database, Checking database for user's recipes".PHP_EOL;
+	array_push($logs,$msg);
+	$query = "SELECT * FROM Recipes (name) VALUES ('$recipeName')";
+	$result = $mydb->query($query);
+	if ($mydb->errno != 0)
+	{
+		$msg = "Failed to execute query: ".PHP_EOL;
+		$msg1 = __FILE__.':'.__LINE__.":error: ".$mydb->error.PHP_EOL;
+		array_push($logs,$msg,$msg1);
+		exit($logs);
+	}
+	if ($result) {
+		$msg = "Sending Recipes".PHP_EOL;
+		array_push($logs,$msg);
+		$logs['userRecipes'] = $result;
+		$logs['returnCode'] = '1';
+		exit($logs);
+	}
+	return $logs;
+    }	
     catch(mysqli_sql_exception $e) {
 	    array_push($logs,$e->getMessage());
 	    return $logs;
@@ -215,10 +291,18 @@ function requestProcessor($request)
       $msg =  "Attempting Account Creation".PHP_EOL;
       array_push($logArray,$msg);
       return doCreate($request['email'],$request['password'],$logArray);
-    case "Recipe":
+    case "addRecipe":
       $msg = "Attempting to Add Recipe".PHP_EOL;
       array_push($logArray,$msg);
       return doAddRec($request['recipe'],$logArray);
+    case "viewAllRecipes":
+      $msg = "Attempting to View All Recipes";
+      array_push($logArray,$msg);
+      return viewAllRec($logArray);
+    case "viewUserRecipes":
+      $msg = "Attempting to View Recipes for User";
+      array_push($logArray,$msg);
+      return viewUserRec($request['email'],$logArray);
     case "Voting":
       $msg = "Attempting to Adjust Vote".PHP_EOL;
       array_push($logArray,$msg);
@@ -237,4 +321,3 @@ $server->process_requests('requestProcessor');
 echo "testRabbitMQServer END".PHP_EOL;
 exit();
 ?>
-
