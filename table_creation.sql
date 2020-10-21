@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS recipes(
 	recipe_id INT NOT NULL AUTO_INCREMENT,
 	recipe_title VARCHAR(255),
 	recipe_description VARCHAR(255),
+	score INT,
 	PRIMARY KEY (recipe_id)
 );
 
