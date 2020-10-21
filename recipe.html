@@ -9,12 +9,14 @@ include 'recipeConnect.php';
     <meta name="description" content="">
     </head>
 <body>
-    <form action = "recipe.php" method = "post">
     <h1>Recipes</h1>
     <h2>Your Recipes:</h2>
     
     <button onClick="myFunction()">New Recipe</button>
-        <a href ="ingredient.html"> <p id="demo"></p></a>
+    <form action = "recipe.php" method = "post">
+	    <a href ="ingredient.html" id = "demo" type = "text" name="demo" ></a>
+        <input type="text" name = "demo">
+	<button type = "submit">Save</button>
         </form>
     <p id="recipes">
 	<?php

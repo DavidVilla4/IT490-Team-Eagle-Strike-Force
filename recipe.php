@@ -19,18 +19,21 @@ if(isset($_POST))
 {
     $type = "recipe";
     $recipe = $_POST["demo"];
+    echo $recipe;
     
 }
 echo $type;
 echo $recipe;
 $request = array();
-$request['type'] = "recipe";
+$request['type'] = $type;
 $request['recipe'] = $recipe;
+
 
 $response = $client->send_request($request);
 //$response = $client->publish($request);
 
 echo "client received response: ".PHP_EOL;
+echo $recipe.PHP_EOL;
 print_r($response);
 //include 'recipe.html';
 //header('Location:recipe.html');
