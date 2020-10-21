@@ -19,7 +19,7 @@ function doVoting($recipeName,$review,$logs)
 	array_push($logs,$msg);
 	if ($review == "up")
        	{
-		$query = "UPDATE field_name SET vote = vote + 1 WHERE recipeName = $recipeName";
+		$query = "UPDATE recipes SET score = score + 1 WHERE recipe_title = '$recipeName'";
 		$result = $mydb->query($query);
 		if ($mydb->errno != 0)
 		{
@@ -34,9 +34,9 @@ function doVoting($recipeName,$review,$logs)
 			array_push($logs,$msg);
 		}
 	}
-	else if ($review == "no")
+	else if ($review == "down")
        	{
-		$query = "UPDATE field_name SET vote = vote - 1 WHERE recipeName = $recipeName";
+		$query = "UPDATE recipes SET score = score - 1 WHERE recipe_title = '$recipeName'";
 		$result = $mydb->query($query);
 		if ($mydb->errno != 0)
 		{
@@ -57,7 +57,7 @@ function doVoting($recipeName,$review,$logs)
 		array_push($logs,$msg);
 		exit($logs);
 	}
-	$query = "SELECT field_name FROM Recipes WHERE recipeName = '$recipeName'";
+	$query = "SELECT recipe_title FROM recipes WHERE recipe_title = '$recipeName'";
 	$result = $mydb->query($query);
 	if ($mydb->errno != 0)
 	{
@@ -79,7 +79,7 @@ function doVoting($recipeName,$review,$logs)
     }
 }
 
-function doAddRec($recName,$logs)
+function doAddRec($recipeName,$logs)
 {	
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);   
     try {    
@@ -92,7 +92,7 @@ function doAddRec($recName,$logs)
 	}
 	$msg = "Connected to Database, Checking database for user".PHP_EOL;
 	array_push($logs,$msg);
-	$query = "INSERT INTO Recipes (name) VALUES ('$recipeName')";
+	$query = "INSERT INTO recipes (recipe_name) VALUES ('$recipeName')";
 	$result = $mydb->query($query);
 	if ($mydb->errno != 0)
 	{
