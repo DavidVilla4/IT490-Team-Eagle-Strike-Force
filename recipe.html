@@ -37,11 +37,13 @@ include 'recipeConnect.php';
 	?>
     </p>
     <script>
+    var array = [];
     function myFunction()
         {
             var recipe = prompt("Please name the new recipe");
+	    array.push(recipe+'<br>');
             //send name to database, have database respond
-            document.getElementById("demo").innerHTML= recipe;
+            document.getElementById("demo").innerHTML= array.join(" ");
             //open up new recipe page that directly connects to the database created
             
         }
