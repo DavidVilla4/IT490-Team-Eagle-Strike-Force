@@ -154,7 +154,7 @@ function viewAllRec($logs)
 }
 
 function viewUserRec($username, $logs)
-{
+{/*
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);   
     try {    
 	$mydb = new mysqli('127.0.0.1','admin','admin','newDb');
@@ -187,7 +187,8 @@ function viewUserRec($username, $logs)
     catch(mysqli_sql_exception $e) {
 	    array_push($logs,$e->getMessage());
 	    return $logs;
-    }
+    }*/
+	return $logs; //remove this when function is complete
 }
 
 function doLogin($email,$password,$logs)
