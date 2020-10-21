@@ -1,45 +1,48 @@
 USE newDb;
 
-CREATE TABLE recipes(
+CREATE TABLE IF NOT EXISTS recipes(
 	recipe_id INT NOT NULL AUTO_INCREMENT,
 	recipe_title VARCHAR(255),
 	recipe_description VARCHAR(255),
-	PRIMARY KEY (recipe_id),
-	FOREIGN KEY (recipe_id) REFERENCES recipe_ingredients(recipe_id)
+	PRIMARY KEY (recipe_id)
 );
 
-CREATE TABLE recipe_ingredients(
+CREATE TABLE IF NOT EXISTS recipe_ingredients(
 	recipe_id INT NOT NULL,
 	measurement_id INT,
 	measurement_qty_id INT,
 	ingredient_id INT,
-	PRIMARY KEY (recipe_id),
-	FOREIGN KEY (recipe_id) REFERENCES recipes(recipe_id),
-	FOREIGN KEY (measurement_id) REFERENCES measure_units(measurement_id),
-	FOREIGN KEY (measurement_qty_id) REFERENCES measure_quant(measurement_qty_id),
-	FOREIGN KEY (ingredient_id) REFERENCES ingredients(ingredient_id)
+	PRIMARY KEY (recipe_id)
 );
 
-CREATE TABLE measure_units(
+CREATE TABLE IF NOT EXISTS measure_units(
 	measurement_id INT NOT NULL AUTO_INCREMENT,
 	measurement_desc VARCHAR(255),
-	PRIMARY KEY (measurement_id),
-	FOREIGN KEY (measurement_id) REFERENCES recipe_ingredients(measurement_id)
+	PRIMARY KEY (measurement_id)
 );
 
-CREATE TABLE measure_quant(
+CREATE TABLE IF NOT EXISTS  measure_quant(
 	measurement_qty_id INT NOT NULL AUTO_INCREMENT,
 	quant VARCHAR(255),
-	PRIMARY KEY (measurement_qty_id),
-	FOREIGN KEY (measurement_qty_id) REFERENCES recipe_ingredients(measurement_qty_id)
+	PRIMARY KEY (measurement_qty_id)
 );
 
-CREATE TABLE ingredients(
+CREATE TABLE IF NOT EXISTS ingredients(
 	ingredient_id INT NOT NULL AUTO_INCREMENT,
 	ingredient_name VARCHAR(255),
-	PRIMARY KEY (ingredient_id),
-	FOREIGN KEY (ingredient_id) REFERENCES recipe_ingredients(ingredient_id)
+	PRIMARY KEY (ingredient_id)
 );
+
+ALTER TABLE recipes ADD FOREIGN KEY (recipe_id) REFERENCES recipe_ingredients (recipe_id);
+ALTER TABLE recipe_ingredients ADD FOREIGN KEY (recipe_id) REFERENCES recipes (recipe_id);
+ALTER TABLE recipe_ingredients ADD FOREIGN KEY (measurement_id) REFERENCES measure_units (measurement_id);
+ALTER TABLE recipe_ingredients ADD FOREIGN KEY (measurement_qty_id) REFERENCES measure_quant (measurement_qty_id);
+ALTER TABLE recipe_ingredients ADD FOREIGN KEY (ingredient_id) REFERENCES ingredients (ingredient_id);
+ALTER TABLE measure_units ADD FOREIGN KEY (measurement_id) REFERENCES recipe_ingredients (measurement_id);
+ALTER TABLE measure_quant ADD FOREIGN KEY (measurement_qty_id) REFERENCES recipe_ingredients (measurement_qty_id);
+ALTER TABLE ingredients ADD FOREIGN KEY (ingredient_id) REFERENCES recipe_ingredients (ingredient_id);
+
+
 /*
 
 SELECT 

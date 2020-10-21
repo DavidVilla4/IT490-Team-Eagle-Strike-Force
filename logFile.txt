@@ -96,3 +96,74 @@ array(4) {
 "
 }
 processed one-way message
+
+
+array(4) {
+  ["returnCode"]=>
+  string(1) "1"
+  [0]=>
+  string(17) "Attempting Login
+"
+  [1]=>
+  string(50) "Connected to Database, Checking database for user
+"
+  [2]=>
+  string(16) "Logging In User
+"
+}
+processed one-way message
+array(4) {
+  ["returnCode"]=>
+  string(1) "1"
+  [0]=>
+  string(17) "Attempting Login
+"
+  [1]=>
+  string(50) "Connected to Database, Checking database for user
+"
+  [2]=>
+  string(16) "Logging In User
+"
+}
+processed one-way message
+
+
+client received response: 
+Sending a message
+
+./loggingClient.php END
+
+
+array(2) {
+  ["returnCode"]=>
+  string(1) "0"
+  [0]=>
+  string(37) "Server received request and processed"
+}
+processed one-way message
+array(2) {
+  ["returnCode"]=>
+  string(1) "0"
+  [0]=>
+  string(37) "Server received request and processed"
+}
+processed one-way message
+array(3) {
+  ["returnCode"]=>
+  string(1) "0"
+  [0]=>
+  string(26) "Attempting to Adjust Vote
+"
+  [1]=>
+  string(64) "Access denied for user 'admin'@'localhost' (using password: YES)"
+}
+processed one-way message
+string(17) "Sending a message"
+error: rabbitMQServer: process_message: exception caught: AMQPQueueException: Server channel error: 404, message: NOT_FOUND - no queue 'loggingQueue3_response' in vhost 'it490' in /home/allie/git/database/IT490-Team-Eagle-Strike-Force/rabbitMQLib.inc:77
+Stack trace:
+#0 /home/allie/git/database/IT490-Team-Eagle-Strike-Force/rabbitMQLib.inc(77): AMQPQueue->bind()
+#1 [internal function]: rabbitMQServer->process_message()
+#2 /home/allie/git/database/IT490-Team-Eagle-Strike-Force/rabbitMQLib.inc(122): AMQPQueue->consume()
+#3 /home/allie/git/database/IT490-Team-Eagle-Strike-Force/loggingServer.php(14): rabbitMQServer->process_requests()
+#4 {main}string(17) "Sending a message"
+processed one-way message
