@@ -13,7 +13,7 @@ function doVoting($recipeName,$review,$logs)
 	{
 		$msg = "Failed to connect to database: ". $mydb->error . PHP_EOL;
 		array_push($logs,$msg);
-		exit($logs);
+		return $logs;
 	}
 	$msg = "Connected to database".PHP_EOL;
 	array_push($logs,$msg);
@@ -26,7 +26,7 @@ function doVoting($recipeName,$review,$logs)
 			$msg = "Failed to execute query: ".PHP_EOL;
 			$msg1 = __FILE__.':'.__LINE__.":error: ".$mydb->error.PHP_EOL;
 			array_push($logs,$msg,$msg1);
-			exit($logs);
+			return $logs;
 		}
 		if ($result)
 		{
@@ -44,7 +44,7 @@ function doVoting($recipeName,$review,$logs)
 			$msg = "Failed to execute query: ".PHP_EOL;
 			$msg1 = __FILE__.':'.__LINE__.":error: ".$mydb->error.PHP_EOL;
 			array_push($logs,$msg,$msg1);
-			exit($logs);
+			return $logs;
 		}
 		if ($result)
 		{
@@ -56,8 +56,8 @@ function doVoting($recipeName,$review,$logs)
 	else
        	{
 		$msg = "Incorrect value for review".PHP_EOL;
-		array_push($logs,$msg);
-		exit($logs);
+		array_push($logs,$msg);	
+		return $logs;
 	}
 	$query = "SELECT score FROM recipes WHERE recipe_title = '$recipeName'";
 	$result = $mydb->query($query);
@@ -66,7 +66,7 @@ function doVoting($recipeName,$review,$logs)
 		$msg = "Failed to execute query: ".PHP_EOL;
 		$msg1 = __FILE__.':'.__LINE__.":error: ".$mydb->error.PHP_EOL;
 		array_push($logs,$msg,$msg1);
-		exit($logs);
+		return $logs;
 	}
 	if ($result)
 	{
@@ -90,7 +90,7 @@ function doAddRec($recipeName,$logs)
 	{
 		$msg = "Failed to connect to database: ". $mydb->error . PHP_EOL;
 		array_push($logs,$msg);
-		exit($logs);
+		return $logs;
 	}
 	$msg = "Connected to Database, Checking database for user".PHP_EOL;
 	array_push($logs,$msg);
@@ -101,14 +101,13 @@ function doAddRec($recipeName,$logs)
 		$msg = "Failed to execute query: ".PHP_EOL;
 		$msg1 = __FILE__.':'.__LINE__.":error: ".$mydb->error.PHP_EOL;
 		array_push($logs,$msg,$msg1);
-		exit($logs);
+		return $logs;
 	}
 	if ($result)
 	{
 		$msg = "Recipe Added".PHP_EOL;
 		$logs['returnCode'] = '1';
 		array_push($logs,$msg);
-		exit($logs);
 	}
 	return $logs;
     }
@@ -116,6 +115,44 @@ function doAddRec($recipeName,$logs)
 	    array_push($logs,$e->getMessage());
 	    return $logs;
     }
+}
+
+function doPullRec($recipeName,$logs)
+{/*
+    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);   
+    try {    
+	$mydb = new mysqli('127.0.0.1','admin','admin','newDb');
+	if ($mydb->errno != 0)
+	{
+		$msg = "Failed to connect to database: ". $mydb->error . PHP_EOL;
+		array_push($logs,$msg);
+		return $logs;
+	}
+	$msg = "Connected to Database, Checking database for recipes".PHP_EOL;
+	array_push($logs,$msg);
+	$query = "SELECT * FROM recipes WHERE recipe_title = '$recipeName'";
+	$result = $mydb->query($query);
+	if ($mydb->errno != 0)
+	{
+		$msg = "Failed to execute query: ".PHP_EOL;
+		$msg1 = __FILE__.':'.__LINE__.":error: ".$mydb->error.PHP_EOL;
+		array_push($logs,$msg,$msg1);
+	}
+	if (mysql_num_rows($result) == 0)
+	{
+		$newClient = new rabbitMQClient("dataPull.ini","testServer");
+		$msg = "dataClientConnection BEGIN".PHP_EOL;
+		array_push($logs,$msg);
+		$dataRequest = array("recipeName" => $recipeName);
+		$dataResponse = $newClient->send_request($dataRequest);
+		//do something with response to insert into database and send it to website
+	}
+	return $logs;
+    }	
+    catch(mysqli_sql_exception $e) {
+	    array_push($logs,$e->getMessage());
+	    return $logs;
+    }*/return $logs;
 }
 
 function viewAllRec($logs)
@@ -127,7 +164,7 @@ function viewAllRec($logs)
 	{
 		$msg = "Failed to connect to database: ". $mydb->error . PHP_EOL;
 		array_push($logs,$msg);
-		exit($logs);
+		return $logs;
 	}
 	$msg = "Connected to Database, Checking database for recipes".PHP_EOL;
 	array_push($logs,$msg);
@@ -138,10 +175,12 @@ function viewAllRec($logs)
 		$msg = "Failed to execute query: ".PHP_EOL;
 		$msg1 = __FILE__.':'.__LINE__.":error: ".$mydb->error.PHP_EOL;
 		array_push($logs,$msg,$msg1);
+		return $logs;
 	}
 	if ($result)
 	{
 		$msg = "Sending All Recipes".PHP_EOL;
+		$logs['allRecipes'] = $result;
 		$logs['returnCode'] = '1';
 		array_push($logs,$msg);
 	}
@@ -162,7 +201,7 @@ function viewUserRec($username, $logs)
 	{
 		$msg = "Failed to connect to database: ". $mydb->error . PHP_EOL;
 		array_push($logs,$msg);
-		exit($logs);
+		return $logs;
 	}
 	$msg = "Connected to Database, Checking database for user's recipes".PHP_EOL;
 	array_push($logs,$msg);
@@ -173,14 +212,13 @@ function viewUserRec($username, $logs)
 		$msg = "Failed to execute query: ".PHP_EOL;
 		$msg1 = __FILE__.':'.__LINE__.":error: ".$mydb->error.PHP_EOL;
 		array_push($logs,$msg,$msg1);
-		exit($logs);
+		return $logs;
 	}
 	if ($result) {
 		$msg = "Sending Recipes".PHP_EOL;
 		array_push($logs,$msg);
 		$logs['userRecipes'] = $result;
 		$logs['returnCode'] = '1';
-		exit($logs);
 	}
 	return $logs;
     }	
@@ -202,7 +240,7 @@ function doLogin($email,$password,$logs)
 	{
 		$msg = "Failed to connect to database: ". $mydb->error . PHP_EOL;
 		array_push($logs,$msg);
-		exit($logs);
+		return $logs;
 	}
 	$msg = "Connected to Database, Checking database for user".PHP_EOL;
 	array_push($logs,$msg);
@@ -213,7 +251,7 @@ function doLogin($email,$password,$logs)
 		$msg = "Failed to execute query: ".PHP_EOL;
 		$msg1 = __FILE__.':'.__LINE__.":error: ".$mydb->error.PHP_EOL;
 		array_push($logs,$msg,$msg1);
-		exit($logs);
+		return $logs;
 	}
 	if ($result)
 	{
@@ -296,6 +334,10 @@ function requestProcessor($request)
       $msg = "Attempting to Add Recipe".PHP_EOL;
       array_push($logArray,$msg);
       return doAddRec($request['recipe'],$logArray);
+    case "pullRecipe":
+      $msg = "Attempting to Pull Recipes".PHP_EOL;
+      array_push($logArray,$msg);
+      return doPullRec($request['recipe'],$logArray);
     case "viewAllRecipes":
       $msg = "Attempting to View All Recipes";
       array_push($logArray,$msg);
