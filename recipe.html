@@ -1,5 +1,6 @@
 <?php
 include 'recipeConnect.php';
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -19,19 +20,31 @@ include 'recipeConnect.php';
 	<button type = "submit">Save</button>
         </form>
     <p id="recipes">
-	<?php
-	$sql = "SELECT * FROM database";
-	$result = mysqli_query($conn, $sql);
-	if (mysqli_num_rows($result)>0)
-	{
-		while($row=mysqli_fetch_assoc($result))
+	<?php include 'recipeConnect.php';
+
+    $type = "viewAllRecipes";
+    echo $type;
+    $request = array();
+    $request['type']=$type;
+    echo "<br>";
+    echo $request['type'];
+    $response = $client->send_request($request);
+    echo "<br>";
+    echo "client received response: ".PHP_EOL;
+
+    print_r($response);
+    if($response['returnCode'] == "1")
+    {
+    echo "hello world1";
+    while($row=mysqli_fetch_array($response['allRecipes']))
 		{
+            echo "hello world";
 			echo "<p>";
-			echo $row['recipe'];
+			echo $row;
             echo "<br>";
             echo "<br>";
 		}
-	}
+    }
     else
     {
         echo "you do not have any recipes yet";

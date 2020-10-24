@@ -17,9 +17,9 @@ else
 }
 if(isset($_POST))
 {
-    $type = "recipe";
+    $type = "addRecipe";
     $recipe = $_POST["demo"];
-    echo $recipe;
+    
     
 }
 echo $type;
@@ -33,16 +33,19 @@ $response = $client->send_request($request);
 //$response = $client->publish($request);
 
 echo "client received response: ".PHP_EOL;
-echo $recipe.PHP_EOL;
+
 print_r($response);
 //include 'recipe.html';
 //header('Location:recipe.html');
-if($response == "1")
+if($response['returnCode'] == "1")
 {
-	include 'cookbook.html';
-	header('Location:cookbook.html');
+    $logging  = new rabbitMQClient("logging.ini","testServer");
+   	$logging ->publish($response);
+	include 'recipe.html';
+	header('Location:recipe.html');
 	print_r($response);
 }
+
 echo "\n\n";
 
 echo $argv[0]." END".PHP_EOL;
