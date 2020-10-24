@@ -108,7 +108,6 @@ function doAddRec($recipeName,$logs)
 		$msg = "Recipe Added".PHP_EOL;
 		$logs['returnCode'] = '1';
 		array_push($logs,$msg);
-		exit($logs);
 	}
 	return $logs;
     }
