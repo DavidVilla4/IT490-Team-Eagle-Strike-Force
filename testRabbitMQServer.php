@@ -140,12 +140,7 @@ function doPullRec($recipeName,$logs)
 	}
 	if (mysql_num_rows($result) == 0)
 	{
-		$newClient = new rabbitMQClient("dataPull.ini","testServer");
-		$msg = "dataClientConnection BEGIN".PHP_EOL;
-		array_push($logs,$msg);
-		$dataRequest = array("recipeName" => $recipeName);
-		$dataResponse = $newClient->send_request($dataRequest);
-		//do something with response to insert into database and send it to website
+		include 'ClientServer.php';
 	}
 	return $logs;
     }	
