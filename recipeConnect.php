@@ -1,4 +1,4 @@
-#!/usr/bin/php
+
 <?php
 $servername = "testserver";
 $dbname = "newDb";

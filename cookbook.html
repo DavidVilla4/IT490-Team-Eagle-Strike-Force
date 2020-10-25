@@ -6,25 +6,14 @@
     <meta name="description" content="">
     </head>
 <body>
-    comment: <input type = "text" id="text" name="text">
-    <button onClick="myFunction()">Post</button>
-    <p id ="display"></p>
-    <script>
-        function myFunction()
-        {
-        var fs = require("fs"); 
-        var comment= document.getElementById("text").value;
-        document.getElementById("display").innerHTML=comment;
-        fs.writeFile('comment.txt', comment, function(err))
-            {
-                if(err)
-                    {
-                        return console.error(err);
-                    }
-            }
-            
-        }
-    </script>
+    new ingredient: <input type = "text" id="text" name="text">
+    <button onClick="myFunction()">accept</button>
+    <p id ="display">
+    <?php include 'edit.php';
+    echo $edit;
+    ?>
+    </p>
+   
     
 
     

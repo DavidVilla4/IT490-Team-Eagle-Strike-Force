@@ -17,46 +17,43 @@ include 'recipeConnect.php';
     <form action = "recipe.php" method = "post">
 	    <a href ="ingredient.html" id = "demo" type = "text" name="demo" ></a>
         <input type="text" name = "demo">
-	<button type = "submit">Save</button>
+	<button  type = "submit">Save</button>
         </form>
-    <p id="recipes">
-	<?php include 'recipeConnect.php';
+    
+	<?php 
 
     $type = "viewAllRecipes";
-    echo $type;
+    
     $request = array();
     $request['type']=$type;
     echo "<br>";
-    echo $request['type'];
+    
     $response = $client->send_request($request);
     echo "<br>";
-    echo "client received response: ".PHP_EOL;
-
-    print_r($response);
-    if($response['returnCode'] == "1")
+    
+    //print_r($response);
+    $arrlen = count($response[allRecipes]);
+    //echo $arrlen;
+    for($x=0; $x<$arrlen; $x++)
     {
-    echo "hello world1";
-    while($row=mysqli_fetch_array($response['allRecipes']))
-		{
-            echo "hello world";
-			echo "<p>";
-			echo $row;
-            echo "<br>";
-            echo "<br>";
-		}
-    }
-    else
-    {
-        echo "you do not have any recipes yet";
-    }
+        
+        echo $response[allRecipes][$x];
+        echo "<br>";
+    }   
+   
 	?>
-    </p>
+    
+    <form action = "edit.php" method ="post">
+    Recipe you want to edit: <input type = "text" id="edit" name="edit">
+    <button type="submit">accept</button>
+    </form>
+    
     <script>
     var array = [];
     function myFunction()
         {
-            var recipe = prompt("Please name the new recipe");
-	    array.push(recipe+'<br>');
+            //var recipe = prompt("Please name the new recipe");
+	        array.push(recipe+'<br>');
             //send name to database, have database respond
             document.getElementById("demo").innerHTML= array.join(" ");
             //open up new recipe page that directly connects to the database created
