@@ -8,6 +8,7 @@ $client = new rabbitMQClient("dataPull.ini","testServer");
 
 $request = array();
 $request['type'] = $argv[1];
+$request['query'] = $argv[2];
 $response = $client->send_request($request);
 //$response = $client->publish($request);
 
