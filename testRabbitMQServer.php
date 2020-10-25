@@ -182,9 +182,9 @@ function viewAllRec($logs)
 		$msg = "Sending All Recipes".PHP_EOL;
 		array_push($logs,$msg);
 		$logs['allRecipes'] = array();
-		while($row = mysqli_fetch_assoc($result))
+		while($row = $result->fetch_assoc())
 		{
-			array_push($logs['allRecipes'],$row['recipe_title']);
+			$logs['allRecipes'][] = $row['recipe_title'];
 		}
 		$logs['returnCode'] = '1';
 	}
