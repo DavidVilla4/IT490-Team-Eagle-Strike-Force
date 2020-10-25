@@ -180,9 +180,13 @@ function viewAllRec($logs)
 	if ($result)
 	{
 		$msg = "Sending All Recipes".PHP_EOL;
-		$logs['allRecipes'] = $result;
-		$logs['returnCode'] = '1';
 		array_push($logs,$msg);
+		$logs['allRecipes'] = array();
+		while($row = $result->fetch_assoc())
+		{
+			$logs['allRecipes'][] = $row['recipe_title'];
+		}
+		$logs['returnCode'] = '1';
 	}
 	return $logs;
     }
