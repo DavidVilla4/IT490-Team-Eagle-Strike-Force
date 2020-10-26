@@ -6,13 +6,43 @@
     <meta name="description" content="">
     </head>
 <body>
-    new ingredient: <input type = "text" id="text" name="text">
-    <button onClick="myFunction()">accept</button>
-    <p id ="display">
-    <?php include 'edit.php';
-    echo $edit;
+    
+    <h1>
+    <?php 
+    include editor.php;
+    $myfile = fopen("recipe.txt","r") or die ("unable to open file");
+    echo fread($myfile,filesize("recipe.txt"));
+    fclose($myfile);
     ?>
-    </p>
+    </h1>
+    <br>
+    <form action = "ingredient.php" method = "post">
+    new ingredient: <input type = "text" id="text" name="text">
+    <button type = "submit" >accept</button>
+    </form>
+    
+    <?php 
+    include 'recipeConnect.php';
+    $type = "viewAllIngredients";
+    
+    $request = array();
+    $request['type']=$type;
+    echo "<br>";
+    
+    $response = $client->send_request($request);
+    echo "<br>";
+    
+    //print_r($response);
+    $arrlen = count($response[allIngredients]);
+    //echo $arrlen;
+    for($x=0; $x<$arrlen; $x++)
+    {
+        
+        echo $response[allIngredients][$x];
+        echo "<br>";
+    }   
+   
+	?>
    
     
 

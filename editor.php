@@ -4,10 +4,10 @@
 require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
-include 'edit.php';
+
     
-include 'cookbook.html';
-header('Location:cookbook.html');
+$myfile = fopen("recipe.txt","r") or die ("unable to open file");
+
 
 
 ?>
