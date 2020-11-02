@@ -119,69 +119,60 @@ function doAddRec($recipeName,$logs)
     }
 }
 
-function doAddRecInfo($recipeName,$ingredients,$measureUnits,$measureAmounts,$logs)
+function doAddRecInfo($recipeName,$ingredient,$measureUnit,$measureAmount,$logs)
 {	
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);   
     try {    
 	$mydb = doDbconnect($logs);	
 	$msg = "Connected to Database, Attempting to Add Information".PHP_EOL;
 	array_push($logs,$msg);
-	foreach ($ingredients as $val)
+	$query = "INSERT IGNORE INTO ingredients (ingredient_name) VALUES ('$ingredient')";
+	$result = $mydb->query($query);
+	if ($mydb->errno != 0)
 	{
-		$query = "INSERT IGNORE INTO ingredients (ingredient_name) VALUES ('$val')";
-		$result = $mydb->query($query);
-		if ($mydb->errno != 0)
-		{
-			$msg = "Failed to execute query: ".PHP_EOL;
-			$msg1 = __FILE__.':'.__LINE__.":error: ".$mydb->error.PHP_EOL;
-			array_push($logs,$msg,$msg1);
-			$logs['returnCode'] = '0';
-			return $logs;
-		}
-		if ($result)
-	       	{
-			$msg = "Ingredient Added".PHP_EOL;
-			array_push($logs,$msg);
-			$logs['returnCode'] = '1';
-		}
+		$msg = "Failed to execute query: ".PHP_EOL;
+		$msg1 = __FILE__.':'.__LINE__.":error: ".$mydb->error.PHP_EOL;
+		array_push($logs,$msg,$msg1);
+		$logs['returnCode'] = '0';
+		return $logs;
 	}
-	foreach ($measureUnits as $val)
-	{
-		$query = "INSERT IGNORE INTO measure_units (measurement_desc) VALUES ('$val')";
-		$result = $mydb->query($query);
-		if ($mydb->errno != 0)
-		{
-			$msg = "Failed to execute query: ".PHP_EOL;
-			$msg1 = __FILE__.':'.__LINE__.":error: ".$mydb->error.PHP_EOL;
-			array_push($logs,$msg,$msg1);
-			$logs['returnCode'] = '0';
-			return $logs;
-		}
-		if ($result)
-	       	{
-			$msg = "Measurement Unit Added".PHP_EOL;
-			array_push($logs,$msg);
-			$logs['returnCode'] = '1';
-		}
+	if ($result)
+       	{
+		$msg = "Ingredient Added".PHP_EOL;
+		array_push($logs,$msg);
+		$logs['returnCode'] = '1';
 	}
-	foreach ($measureAmounts as $val)
+	$query = "INSERT IGNORE INTO measure_units (measurement_desc) VALUES ('$measureUnit')";
+	$result = $mydb->query($query);
+	if ($mydb->errno != 0)
 	{
-		$query = "INSERT IGNORE INTO measure_quant (quant) VALUES ('$val')";
-		$result = $mydb->query($query);
-		if ($mydb->errno != 0)
-		{
-			$msg = "Failed to execute query: ".PHP_EOL;
-			$msg1 = __FILE__.':'.__LINE__.":error: ".$mydb->error.PHP_EOL;
-			array_push($logs,$msg,$msg1);
-			$logs['returnCode'] = '0';
-			return $logs;
-		}
-		if ($result)
-	       	{
-			$msg = "Measurement Amount Added".PHP_EOL;
-			array_push($logs,$msg);
-			$logs['returnCode'] = '1';
-		}
+		$msg = "Failed to execute query: ".PHP_EOL;
+		$msg1 = __FILE__.':'.__LINE__.":error: ".$mydb->error.PHP_EOL;
+		array_push($logs,$msg,$msg1);
+		$logs['returnCode'] = '0';
+		return $logs;
+	}
+	if ($result)
+	{
+		$msg = "Measurement Unit Added".PHP_EOL;
+		array_push($logs,$msg);
+		$logs['returnCode'] = '1';
+	}
+	$query = "INSERT IGNORE INTO measure_quant (quant) VALUES ('$measureAmount')";
+	$result = $mydb->query($query);
+	if ($mydb->errno != 0)
+	{
+		$msg = "Failed to execute query: ".PHP_EOL;
+		$msg1 = __FILE__.':'.__LINE__.":error: ".$mydb->error.PHP_EOL;
+		array_push($logs,$msg,$msg1);
+		$logs['returnCode'] = '0';
+		return $logs;
+	}
+	if ($result)
+       	{
+		$msg = "Measurement Amount Added".PHP_EOL;
+		array_push($logs,$msg);
+		$logs['returnCode'] = '1';
 	}
 	return $logs;
     }
@@ -198,7 +189,8 @@ function doGetRecInfo($recipeName,$logs)
 	$mydb = doDbconnect($logs);
 	$msg = "Connected to Database, Checking database for recipe info".PHP_EOL;
 	array_push($logs,$msg);
-	$query = "";//Insert query of recipe_ingredients
+	query:
+	$query = "SELECT r.recipe_title AS Recipe Name, q.measurement_qty_id AS Amount, u.measurement_desc AS Unit, i.ingredient_name AS Ingredient FROM recipes r LEFT JOIN recipe_ingredients q on r.recipe_id = q.recipe_id LEFT JOIN ingredients i on i.ingredient_id = q.ingredient_id LEFT JOIN measure_units u on u.measurement_id = q.measurement_id";
 	$result = $mydb->query($query);
 	if ($mydb->errno != 0)
 	{
@@ -211,10 +203,10 @@ function doGetRecInfo($recipeName,$logs)
 		$msg = "Sending Recipe Info".PHP_EOL;
 		array_push($logs,$msg);
 		$logs['recipeInfo'] = array();
-	/*	while($row = $result->fetch_assoc())
+		while($row = $result->fetch_assoc())
 		{
-			$logs['recipeInfo'][] = ; Insert into array here
-		}*/
+			$logs['recipeInfo'][] = $row['Amount']." ".$row['Unit']." ".$row['Ingredient'];
+		}
 		$logs['returnCode'] = '1';
 	}
 	else if (mysql_num_rows($result) == 0 && $result)
@@ -232,9 +224,8 @@ function doGetRecInfo($recipeName,$logs)
 			$msg = "Getting Recipe Info from API".PHP_EOL;
 			array_push($logs,$msg);
 			include 'ClientServer.php';
-			//Do something with the result from API
+			goto query;
 		}
-
 	}
 	return $logs;
     }
@@ -244,13 +235,14 @@ function doGetRecInfo($recipeName,$logs)
     }
 }
 
-function doPullRec($recipeName,$logs)
+function doPullRecByName($recipeName,$logs)
 {
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);   
     try {    
 	$mydb = doDbconnect($logs);
 	$msg = "Connected to Database, Checking database for recipes".PHP_EOL;
 	array_push($logs,$msg);
+	query:
 	$query = "SELECT * FROM recipes WHERE recipe_title = '$recipeName'";
 	$result = $mydb->query($query);
 	if ($mydb->errno != 0)
@@ -261,32 +253,20 @@ function doPullRec($recipeName,$logs)
 	}
 	if (mysql_num_rows($result) == 0 && $result)
 	{
+		$msg = "Checking API for recipes".PHP_EOL;
+		array_push($logs,$msg);
+		include 'ClientServer.php';
+		goto query;
+	}
+	else
+	{
+		$msg = "Gathering and Sending Recipes".PHP_EOL;
 		while ($row = $result->fetch_assoc())
 		{
 			$logs['searchRec'][] = $row['recipe_title'];
 		}
-		$msg = "Checking API for recipes".PHP_EOL;
 		array_push($logs,$msg);
-		include 'ClientServer.php';
-		foreach ($someArray as $val)
-		{
-			$query = "INSERT INTO recipes (recipe_title) VALUES ('$val')";
-			$result = $mydb->query($query);
-			if ($mydb->errno != 0)
-			{
-				$msg = "Failed to execute query: ".PHP_EOL;
-				$msg1 = __FILE__.':'.__LINE__.":error: ".$mydb->error.PHP_EOL;
-				$logs['returnCode'] = '0';
-				array_push($logs,$msg,$msg1);
-			}
-			if ($result)
-			{
-				$msg = "Added Recipe From API to Database".PHP_EOL;
-				array_push($logs,$msg);
-				$logs['searchRec'][] = $val;
-				$logs['returnCode'] = '1';
-			}
-		}
+		$logs['returnCode'] = '1';
 	}
 	return $logs;
     }	
@@ -296,6 +276,46 @@ function doPullRec($recipeName,$logs)
     }
 }
 
+function doPullRecByIngredient($ingredientName,$logs)
+{
+    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+    try {
+        $mydb = doDbconnect($logs);
+        $msg = "Connected to Database, Checking database for recipes".PHP_EOL;
+        array_push($logs,$msg);
+        query:
+        $query = ""; //Select all recipe names where they have ingredientName
+        $result = $mydb->query($query);
+        if ($mydb->errno != 0)
+        {
+                $msg = "Failed to execute query: ".PHP_EOL;
+                $msg1 = __FILE__.':'.__LINE__.":error: ".$mydb->error.PHP_EOL;
+                array_push($logs,$msg,$msg1);
+        }
+        if (mysql_num_rows($result) == 0 && $result)
+        {
+                $msg = "Checking API for recipes".PHP_EOL;
+                array_push($logs,$msg);
+                include 'ClientServer.php';
+                goto query;
+        }
+        else
+        {
+                $msg = "Gathering and Sending Recipes".PHP_EOL;
+                while ($row = $result->fetch_assoc())
+		{
+                        $logs['searchRec'][] = $row['recipe_title'];
+                }
+                array_push($logs,$msg);
+                $logs['returnCode'] = '1';
+        }
+        return $logs;
+    }
+    catch(mysqli_sql_exception $e) {
+            array_push($logs,$e->getMessage());
+            return $logs;
+    }
+}
 function viewAllRec($logs)
 {
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);   
@@ -461,11 +481,15 @@ function requestProcessor($request)
     case "addRecipeInfo":
       $msg = "Attempting to Add Recipe Info".PHP_EOL;
       array_push($logArray,$msg);
-      return doAddRecInfo($request['recipe'],$request['ingredients'],$request['units'],$request['amounts'],$logArray);
-    case "pullRecipe":
+      return doAddRecInfo($request['recipe'],$request['ingredient'],$request['unit'],$request['amount'],$logArray);
+    case "pullRecipeByName":
       $msg = "Attempting to Pull Recipes".PHP_EOL;
       array_push($logArray,$msg);
-      return doPullRec($request['recipe'],$logArray);
+      return doPullRecByName($request['recipe'],$logArray);
+    case "pullRecipeByIngredient":
+      $msg = "Attempting to Pull Recipes".PHP_EOL;
+      array_push($logArray,$msg);
+      return doPullRecByIngredient($request['ingredient'],$logArray);
     case "viewRecipeInfo":
       $msg = "Attempting to View Recipe Info".PHP_EOL;
       array_push($logArray,$msg);
