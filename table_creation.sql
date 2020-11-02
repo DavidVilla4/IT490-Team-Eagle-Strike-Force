@@ -43,25 +43,20 @@ ALTER TABLE measure_units ADD FOREIGN KEY (measurement_id) REFERENCES recipe_ing
 ALTER TABLE measure_quant ADD FOREIGN KEY (measurement_qty_id) REFERENCES recipe_ingredients (measurement_qty_id);
 ALTER TABLE ingredients ADD FOREIGN KEY (ingredient_id) REFERENCES recipe_ingredients (ingredient_id);
 
-
 /*
-
-SELECT 
-	r.recipe_title AS Recipe Name,
-	r.recipe_description AS Recipe Description,
-	z.measurement_qty_id AS Amount,
-	u.measurement_desc AS Unit,
+SELECT
+	R.recipe_title AS Recipe Name,
+	q.measurement_qty_id AS Amount,
+	U.measurement_desc AS Unit,
 	i.ingredient_name AS Ingredient
-FROM 
+
+FROM
 	recipes r
 LEFT JOIN
-	recipe_ingredients z on r.recipe_id = z.recipe_id
+	recipe_ingredients q on r.recipe_id = q.recipe_id
 LEFT JOIN
-	measure_units u on r.measurement_id = u.measurement_id
+	ingredients I on I.ingredient_id = q.ingredient_id
 LEFT JOIN
-	ingredients i on r.ingredient_id = i.ingredient_id
-;
-	
-	
-/*	
+	measure_units u on u.measurement_id = q.measurement_id; 
+/*
 	
