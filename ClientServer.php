@@ -5,28 +5,29 @@ require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
 
 $client = new rabbitMQClient("dataPull.ini","testServer");
-$conn = mysqli_connect('localhost','admin','admin','newDb');
+$mysqli = mysqli_connect('localhost','admin','admin','newDb');
 
-if (!$conn) {
-    die('Could not connect: ' . $mysqli_connect_error($conn));
+if (!$mysqli) {
+    die('Could not connect: ' . $mysqli_connect_error($mysqli));
 }
 
 $request = array();
 
 //search by recipe
-$request['type'] = $argv[1];
-$request['query'] = $argv[2];
+$request['type'] = $tase;
+$request['query'] = $q;
 
 $response = $client->send_request($request);
 print_r($response);
 
+//search by recipe or ingredient
 if(is_array($response)){
 
     for($i = 0; $i < count($response); $i++){ 
 	    $id = $response[$i]['id'];
 	    $title = $response[$i]['title'];
 	    $sql = "INSERT IGNORE INTO recipes(recipe_id, recipe_title) VALUES('$id','$title')";
-	    mysqli_query($sql) or exit(mysqli_error());
+	    mysqli_query($mysqli,$sql) or exit(mysqli_error($mysqli));
     }
     
 }
@@ -34,23 +35,6 @@ if(is_array($response)){
 else{
 	echo 'An error occurred ';
 }
-
-//search by ingredient
-/*
-if(is_array($response)){
-
-    foreach ($response as $row){
-            $id = (int)$row['recipe_id'];
-            $title = mysqli_real_escape_string($row['recipe_title']);
-            $sql = "INSERT IGNORE INTO recipes(recipe_id, recipe_title) VALUES('$id','$title')";
-    	    mysqli_query($sql) or exit(mysqli_error());
-	}
-}
-
-else{
-        echo 'An error occurred ';
-}
-*/
 
 echo "client received response: ".PHP_EOL;
 
