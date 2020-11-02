@@ -17,7 +17,7 @@
     fclose($myfile);
     ?>
     </h1>
-    <a href = "search.html">Search</a>
+   
     <br>
     <form action = "ingredient.php" method = "post">
     new ingredient: <input type = "text" id="ingredient" name="ingredient">
@@ -39,12 +39,11 @@
     echo "<br>";
     
     //print_r($response);
-    $arrlen = count($response[allIngredients]);
+    $arrlen = count($response[recipeInfo]);
     //echo $arrlen;
     for($x=0; $x<$arrlen; $x++)
     {
-        
-        echo $response[allIngredients][$x];
+        echo $response[recipeInfo][$x];
         echo "<br>";
     }   
    
