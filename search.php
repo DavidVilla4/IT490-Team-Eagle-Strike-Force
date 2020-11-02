@@ -1,7 +1,7 @@
-
 <html>
 <body>
 <?php
+    
 require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
@@ -17,29 +17,28 @@ else
 }
 if(isset($_POST))
 {
-    $type = "addRecipeInfo";
+    $type = "pullRecipe";
     $ingredient = $_POST["ingredient"];
-    $unit= $_POST["unit"];
-    $amount= $_POST["amount"];
+    $name= $_POST["name"];
     
     
 }
 echo $type;
-echo $recipe;
-if($unit !=null)
+echo $name;
+echo $ingredient;
+if($name==null)
 {
     $request = array();
     $request['type'] = $type;
     $request['ingredient'] = $ingredient;
-    $request['amount']=$amount;
-    $request['unit']=$unit;
 }
-else
+else if($ingredient==null);
 {
-    $request = array();
+  $request = array();
     $request['type'] = $type;
-    $request['ingredient'] = $ingredient;
-    $request['amount']=$amount;
+    $request['name'] = $ingredient;
+    
+    
 }
 
 
@@ -56,14 +55,15 @@ if($response['returnCode'] == "1")
 {
     $logging  = new rabbitMQClient("logging.ini","testServer");
    	$logging ->publish($response);
-	include 'cookbook.html';
-	header('Location:cookbook.html');
+	include 'search.html';
+	header('Location:search.html');
 	print_r($response);
 }
 
 echo "\n\n";
 
 echo $argv[0]." END".PHP_EOL;
+    
 ?>
 </body>
 </html>

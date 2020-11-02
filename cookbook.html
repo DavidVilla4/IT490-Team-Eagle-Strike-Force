@@ -6,25 +6,31 @@
     <meta name="description" content="">
     </head>
 <body>
-    
+    <div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v8.0" nonce="74g5VBAN"></script>
     <h1>
     <?php 
     include editor.php;
     $myfile = fopen("recipe.txt","r") or die ("unable to open file");
+    $recipeName = fread($myfile,filesize("recipe.txt"));
     echo fread($myfile,filesize("recipe.txt"));
     fclose($myfile);
     ?>
     </h1>
+    <a href = "search.html">Search</a>
     <br>
     <form action = "ingredient.php" method = "post">
-    new ingredient: <input type = "text" id="text" name="text">
+    new ingredient: <input type = "text" id="ingredient" name="ingredient">
+    ingredient unit: <input type = "text" id="unit" name="unit">
+    ingredient amount: <input type = "text" id="amount" name="amount">
     <button type = "submit" >accept</button>
     </form>
-    
+    <div class="fb-comments" data-href="http://127.0.0.1/cookbook.html" data-numposts="5" data-width=""></div>
     <?php 
     include 'recipeConnect.php';
-    $type = "viewAllIngredients";
-    
+    $type = "viewRecipeInfo";
+    //$name = $recipeName;
+    echo $name;
     $request = array();
     $request['type']=$type;
     echo "<br>";
