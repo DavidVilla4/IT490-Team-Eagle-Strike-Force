@@ -119,14 +119,14 @@ function doAddRec($recipeName,$logs)
     }
 }
 
-function doAddRecInfo($ingredient,$measureUnit,$measureAmount,$logs)
+function doAddRecInfo($ingredient,$measureAmount,$measureUnit,$logs)
 {	
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);   
     try {    
 	$mydb = doDbconnect($logs);	
 	$msg = "Connected to Database, Attempting to Add Information".PHP_EOL;
 	array_push($logs,$msg);
-	$query = "INSERT IGNORE INTO ingredients (ingredient_name) VALUES ('$ingredient')";
+	$query = "INSERT INTO ingredients (ingredient_name) VALUES ('$ingredient')";
 	$result = $mydb->query($query);
 	if ($mydb->errno != 0)
 	{
@@ -142,7 +142,7 @@ function doAddRecInfo($ingredient,$measureUnit,$measureAmount,$logs)
 		array_push($logs,$msg);
 		$logs['returnCode'] = '1';
 	}
-	$query = "INSERT IGNORE INTO measure_units (measurement_desc) VALUES ('$measureUnit')";
+	$query = "INSERT INTO measure_quant (quant) VALUES ('$measureAmount')";
 	$result = $mydb->query($query);
 	if ($mydb->errno != 0)
 	{
@@ -154,11 +154,11 @@ function doAddRecInfo($ingredient,$measureUnit,$measureAmount,$logs)
 	}
 	if ($result)
 	{
-		$msg = "Measurement Unit Added".PHP_EOL;
+		$msg = "Measurement Amount Added".PHP_EOL;
 		array_push($logs,$msg);
 		$logs['returnCode'] = '1';
 	}
-	$query = "INSERT IGNORE INTO measure_quant (quant) VALUES ('$measureAmount')";
+	$query = "INSERT INTO measure_units (measurement_desc) VALUES ('$measureUnit')";
 	$result = $mydb->query($query);
 	if ($mydb->errno != 0)
 	{
@@ -170,7 +170,7 @@ function doAddRecInfo($ingredient,$measureUnit,$measureAmount,$logs)
 	}
 	if ($result)
        	{
-		$msg = "Measurement Amount Added".PHP_EOL;
+		$msg = "Measurement Unit Added".PHP_EOL;
 		array_push($logs,$msg);
 		$logs['returnCode'] = '1';
 	}
@@ -190,7 +190,7 @@ function doGetRecInfo($logs)
 	$msg = "Connected to Database, Checking database for recipe info".PHP_EOL;
 	array_push($logs,$msg);
 	query:
-	$query = "SELECT r.recipe_title AS 'Recipe Name', q.measurement_qty_id AS 'Amount', u.measurement_desc AS 'Unit', i.ingredient_name AS 'Ingredien't FROM recipes r LEFT JOIN recipe_ingredients q on r.recipe_id = q.recipe_id LEFT JOIN ingredients i on i.ingredient_id = q.ingredient_id LEFT JOIN measure_units u on u.measurement_id = q.measurement_id";
+	$query = "SELECT quant FROM measure_quant UNION SELECT measurement_desc FROM measure_units UNION SELECT ingredient_name FROM ingredients";
 	$result = $mydb->query($query);
 	if ($mydb->errno != 0)
 	{
@@ -205,7 +205,7 @@ function doGetRecInfo($logs)
 		$logs['recipeInfo'] = array();
 		while($row = $result->fetch_assoc())
 		{
-			$logs['recipeInfo'][] = $row['Amount']." ".$row['Unit']." ".$row['Ingredient'];
+			$logs['recipeInfo'][] = $row['ingredient_name']." ".$row['measurement_desc']." ".$row['quant'];
 		}
 		$logs['returnCode'] = '1';
 	}/*
