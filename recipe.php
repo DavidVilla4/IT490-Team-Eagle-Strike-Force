@@ -43,8 +43,9 @@ if($response['returnCode'] == "1")
    	$logging ->publish($response);
 	include 'recipe.html';
 	header('Location:recipe.html');
-	print_r($response);
+	
 }
+
 
 echo "\n\n";
 
