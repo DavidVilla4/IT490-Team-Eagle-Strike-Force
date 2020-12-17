@@ -26,11 +26,11 @@ function requestProcessor($request)
 
 	case "recipeByIngredient":
 
-		 $response = Unirest\Request::get('https://api.spoonacular.com/recipes/findByIngredients?number=25&ranking=1&apiKey=fe22f905e5ec4e7b8947c5351698686c&ingredients='.$response['query']);
+		 $response = Unirest\Request::get('https://api.spoonacular.com/recipes/findByIngredients?number=25&ranking=1&apiKey=fe22f905e5ec4e7b8947c5351698686c&ingredients='.$request['query']);
 
 
-                print_r($response);
-                return $response;
+                print_r($response -> body);
+                return $response -> body;
 
   }
   return array("returnCode" => '0', 'message'=>"Server received request and processed");
