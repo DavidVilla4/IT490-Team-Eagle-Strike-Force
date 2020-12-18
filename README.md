@@ -16,7 +16,7 @@ ________________________________________________________________________________
   <p><a href="https://github.com/DavidVilla4/IT490-Team-Eagle-Strike-Force.git">Project Repo</a></p>
 
   <h2> 2. Trello History </h2>
-  <p>Accessed thorugh the file in the master branch on github</p>
+  <p>Accessed through the file in the master branch on github</p>
 
   <h2> 3. Server Documentation </h2>
    <ul>
