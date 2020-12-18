@@ -9,22 +9,22 @@ $output = shell_exec('tar cvzf deploy1.tgz index.html register.html RegisterRabb
 echo "<pre>$output</pre>";
 
 
-$client = new rabbitMQClient("testRabbitMQ.ini","testServer");
+$client = new rabbitMQClient("devTransfer.ini","testServer");
 if (isset($argv[1]))
 {
   $msg = $argv[1];
 }
 else
 {
-  $msg = "test message";
+  $msg = "1";
 }
 
 $myfile= "deploy1.tgz";
-$type="login_package";
+$type="DevToQA";
 $request = array();
 $request['type'] = $type;
 $request['data'] = $myfile;
-$request['message']=$msg;
+$request['number']=$msg;
 
 $response = $client->send_request($request);
 //$response = $client->publish($request);
@@ -35,12 +35,13 @@ print_r($response);
 
 if ($response['returnCode']=="1")
 {
+	echo "successfully sent data to the Mount Doom";
         $logging  = new rabbitMQClient("logging.ini","testServer");
         $logging ->publish($response);
 }
 else
 {
-        echo "failed to log in".PHP_EOL;
+        echo "failed to send file".PHP_EOL;
 }
 
 
