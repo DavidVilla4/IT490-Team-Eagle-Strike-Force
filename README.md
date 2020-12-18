@@ -13,7 +13,9 @@ ________________________________________________________________________________
 <h1><b> Change Log </b></h1>
 <ol>
   <h2> 1. Git History </h2>
-  <p><a href="https://github.com/DavidVilla4/IT490-Team-Eagle-Strike-Force.git">Project Repo</a></p>
+  <p><a href="https://github.com/DavidVilla4/IT490-Team-Eagle-Strike-Force.git">Project Repo</a></br>
+  Need Master branch, DMZ branch, Database branch, and Website branch
+  </p>
 
   <h2> 2. Trello History </h2>
   <p>Accessed through the file in the master branch on github</p>
