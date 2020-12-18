@@ -18,27 +18,14 @@ function doDbconnect($logs) {
 	}
 }
 
-function doDevToQA($data,$logs)
-{
-	$newClient = new rabbitMQClient("QARecieve.ini","testServer");
-	$newRequest = array();
-	$newRequest['data'] = $data;
-	$response = $newClient->send_request($newRequest);
-	if ($response['code'] == 1)
-	{
-		$logs['returnCode'] = 1;
-	}
-	return $logs
-}
-
-function doDevToQA($data,$logs)
+function doRollbackQA($num,$logs)
 {
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);   
     try {    
 	$mydb = doDbconnect($logs);
 	$msg = "Connected to Database, Checking database".PHP_EOL;
 	array_push($logs,$msg);
-	$query = "UPDATE tablename SET currentBuild = $data";
+	$query = "SELECT old_version FROM version";
 	$result = $mydb->query($query);
 	if ($mydb->errno != 0)
 	{
@@ -49,7 +36,70 @@ function doDevToQA($data,$logs)
 	}
 	if ($result)
 	{
-		$newClient = new rabbitMQClient("prodRecieve.ini","testServer");
+		$row = $result->fetch_assoc();
+		$data = $row["old_version"];
+		doDevToQA($data,$num,$logs);
+	}
+	return $logs;
+    }
+    catch(mysqli_sql_exception $e) {
+	    array_push($logs,$e->getMessage());
+	    return $logs;
+    }
+}
+
+function doDevToQA($data,$num,$logs)
+{
+	$newClient = new rabbitMQClient("QARecieve".$num.".ini","testServer");
+	$newRequest = array();
+	$newRequest['data'] = $data;
+	$response = $newClient->send_request($newRequest);
+	if ($response['code'] == 1)
+	{
+		$logs['returnCode'] = 1;
+	}
+	return $logs
+}
+
+function doQAToProd($data,$num,$logs)
+{
+    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);   
+    try {    
+	$mydb = doDbconnect($logs);
+	$msg = "Connected to Database, Checking database".PHP_EOL;
+	array_push($logs,$msg);
+	$getQuery = "SELECT current_version FROM version";
+	$result = $mydb->query($query);
+	if ($result)
+	{
+		$row = $result->fetch_assoc();
+		$val = $row["current_version"];
+		$updateQuery1 = "UPDATE version SET old_version = $val";
+		$updateQuery2 = "UPDATE version SET current_version = $data";
+		$result = $mydb->query($query);
+		if ($mydb->errno != 0)
+		{
+			$msg = "Failed to execute query: ".PHP_EOL;
+			$msg1 = __FILE__.':'.__LINE__.":error: ".$mydb->error.PHP_EOL;
+			array_push($logs,$msg,$msg1);
+			return $logs;
+		}
+	}
+	else
+	{
+		$query = "INSERT INTO version (current_version) VALUES ($data)";
+		$result = $mydb->query($query);
+		if ($mydb->errno != 0)
+		{
+			$msg = "Failed to execute query: ".PHP_EOL;
+			$msg1 = __FILE__.':'.__LINE__.":error: ".$mydb->error.PHP_EOL;
+			array_push($logs,$msg,$msg1);
+			return $logs;
+		}
+	}
+	if ($result)
+	{
+		$newClient = new rabbitMQClient("prodRecieve".$num.".ini","testServer");
 		$newClient->publish($data);
 		$msg = "Data Sent to Production".PHP_EOL;
 		array_push($logs,$msg);	
@@ -60,7 +110,6 @@ function doDevToQA($data,$logs)
 	    array_push($logs,$e->getMessage());
 	    return $logs;
     }
-    //return false if not valid
 }
 
 function requestProcessor($request)
@@ -78,11 +127,15 @@ function requestProcessor($request)
     case "DevToQA":
       $msg = "Attempting To Send Data".PHP_EOL;
       array_push($logArray,$msg);
-      return doSendToQA($request['data'],$logArray);
+      return doDevToQA($request['data'],$request['number'],$logArray);
     case "QAToProd":
       $msg = "Attempting To Send Data".PHP_EOL;
       array_push($logArray,$msg);
-      return doSendToProd($request['data'],$logArray);
+      return doQAToProd($request['data'],$request['number'],$logArray);
+    case "rollbackQA":
+      $msg = "Attempting To Rollback".PHP_EOL;
+      array_push($logArray,$msg);
+      return doRollbackQA($request['number'],$logArray);
     case "validate_session":
       return doValidate($request['sessionId']);
   }
@@ -91,7 +144,7 @@ function requestProcessor($request)
   return $logArray;
 }
 
-$server = new rabbitMQServer("testRabbitMQ.ini","testServer");
+$server = new rabbitMQServer("devTransfer.ini","testServer");
 echo "testRabbitMQServer BEGIN".PHP_EOL;
 $server->process_requests('requestProcessor');
 echo "testRabbitMQServer END".PHP_EOL;
