@@ -58,7 +58,7 @@ function doDevToQA($data,$num,$logs)
 	{
 		$logs['returnCode'] = 1;
 	}
-	return $logs
+	return $logs;
 }
 
 function doQAToProd($data,$num,$logs)
