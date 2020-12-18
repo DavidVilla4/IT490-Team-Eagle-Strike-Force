@@ -260,7 +260,7 @@ function doLogin($email,$password,$logs)
 	if ($result)
 	{
 		$row = $result->fetch_assoc();
-		if ($row["password"] == $password)
+		if(password_verify('(MD5('$password') . '$salt'))', $hash_pass))
 		{
 			$msg = "Logging In User".PHP_EOL;
 			array_push($logs,$msg);
@@ -292,7 +292,9 @@ function doCreate($email,$password,$logs)
 	}
 	$msg = "Connected to Database\nCreating User Account".PHP_EOL;
 	array_push($logs,$msg);
-	$query = "INSERT INTO USERS (email, password) VALUES ('$email','$password')";
+	$salt = 'abvigf473ofbo1vb';
+	$hash_pass = '(MD5('$password') . '$salt'))';
+	$query = "INSERT INTO USERS (email, password) VALUES ('$email', '$hash_pass')";
 	$result = $mydb->query($query);
 	if ($mydb->errno != 0)
 	{
@@ -308,7 +310,7 @@ function doCreate($email,$password,$logs)
 	}
 	return $logs;
     }
-    catch (mysqli_sql_exception $e) {
+    catch (mysqli_sql_exception $e) {i
 	    array_push($logs,$e->getMessage());
 	    return $logs;
     }
