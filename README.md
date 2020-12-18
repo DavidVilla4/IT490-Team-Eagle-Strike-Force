@@ -6,7 +6,7 @@
 
   <b>Front End:</b> PHP, HTML, CSS, JavaScript</br>
   <b>Backend:</b> PHP, MySQL</br>
-  <b>Technologies:</b> RabbitMQ, MySQL, GIT</br>
+  <b>Technologies:</b> RabbitMQ, MySQL, GIT, Bootstrap, Oracle VirtualBox</br>
   <b>DMZ/Recipe Data Source:</b> Spoonacular, UniRest</br>
 </p>
 ________________________________________________________________________________________________________________________
@@ -24,6 +24,8 @@ ________________________________________________________________________________
       Software for server connectivity is done through Hamachi and RabbitMQ which can be installed from the links below. Also KeepAlived is used for the hot standby.</br>
       <a href="https://hamachi.en.softonic.com/"> - Hamachi Download</a></br><a href="https://www.rabbitmq.com/download.html"> - RabbitMQ Download</a></br><a href="https://www.redhat.com/sysadmin/keepalived-basics"> - KeepAlived Download</a>
       </br></br>
+      <b>Required Packages:</b> php, mysql/mysqli, gitk, php-amqp, rabbitmqserver</br>
+      </br>
       For each of the pillars of the website listed under the goal, the .ini files BROKER_HOST value will need to be changed to the hamachi IP address
       of the computer hosting the servers.
     </p>
